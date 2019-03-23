@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <string>
+#include <oboe/Oboe.h>
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_denizoncoding_denizonaudiolab_MainActivity_stringFromJNI(

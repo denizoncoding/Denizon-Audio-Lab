@@ -25,6 +25,15 @@ add_library( # Sets the name of the library.
 # you want to add. CMake verifies that the library exists before
 # completing its build.
 
+# Set the path to the Oboe directory.
+set (OBOE_DIR ../../../../oboe)
+
+# Add the Oboe library as a subdirectory in your project.
+add_subdirectory (${OBOE_DIR} ./oboe)
+
+# Specify the path to the Oboe header files.
+include_directories (${OBOE_DIR}/include)
+
 find_library( # Sets the name of the path variable.
               log-lib
 
@@ -38,7 +47,7 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
                        native-lib
-
+                        oboe
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )
