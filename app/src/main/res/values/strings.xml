@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Denizon Audio Lab</string>
+
+    <string name="on">On</string>
+    <string name="off">Off</string>
+
+    <string name="wave_type_sine">Sine</string>
+    <string name="wave_type_square">Square</string>
+    <string name="wave_type_sawtooth">Sawtooth</string>
+    <string name="wave_type_triangular">Triangular</string>
+
+    <string name="ferquency_init">Frequency: 440 Hz</string>
 </resources>
