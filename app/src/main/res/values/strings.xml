@@ -3,6 +3,8 @@
 
     <string name="on">On</string>
     <string name="off">Off</string>
+    <string name="name">_name</string>
+    <string name="param">_param</string>
 
     <string name="wave_type_sine">Sine</string>
     <string name="wave_type_square">Square</string>

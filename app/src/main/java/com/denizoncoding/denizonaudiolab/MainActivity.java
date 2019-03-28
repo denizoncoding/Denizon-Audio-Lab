@@ -1,13 +1,22 @@
 package com.denizoncoding.denizonaudiolab;
 
+import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import com.denizoncoding.denizonaudiolab.structure.DenizonEffect;
+import com.denizoncoding.denizonaudiolab.structure.DenizonEffectParameter;
+import com.denizoncoding.denizonaudiolab.ui.EffectListArrayAdapter;
+
+import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
 
@@ -24,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private SeekBar seekBarFrequency;
 
+    private ListView listViewEffects;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +44,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setUIListeners();
 
+        setListView();
+
         radioButtonSine.setChecked(true);
+    }
+
+    private void setListView() {
+
+
+        LinkedList<DenizonEffectParameter> paramList = new LinkedList<>();
+        paramList.add(new DenizonEffectParameter("param_name", 0, 100, 50));
+
+        LinkedList<DenizonEffect> effectList = new LinkedList<>();
+        for (int i = 0; i < 7; i++) {
+            effectList.add(new DenizonEffect("effect_" + i, true, paramList));
+        }
+
+        EffectListArrayAdapter effectListArrayAdapter = new EffectListArrayAdapter(this, effectList);
+
+        listViewEffects.setAdapter(effectListArrayAdapter);
     }
 
     private void createUIElements() {
@@ -47,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         this.seekBarFrequency = findViewById(R.id.seekBarFrequency);
 
+        this.listViewEffects = findViewById(R.id.listViewEffects);
     }
 
     private void setUIListeners() {
