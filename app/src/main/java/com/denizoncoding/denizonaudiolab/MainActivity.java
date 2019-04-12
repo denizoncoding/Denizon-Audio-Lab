@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 Deniz A. Atlihan
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.denizoncoding.denizonaudiolab;
 
 import android.os.Debug;
@@ -24,6 +40,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         System.loadLibrary("native-lib");
     }
 
+    public native boolean initEngine();
+
+    public native boolean startEngine();
+
+    public native boolean pauseEngine();
+
+    public native boolean flushEngine();
+
+    public native boolean stopEngine();
+
+    public native void closeEngine();
+
+    public native void runEngine(boolean onOff);
+
+
     private ToggleButton onOffbutton;
 
     private RadioButton radioButtonSine;
@@ -44,9 +75,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setUIListeners();
 
-        setListView();
+//        setListView();
 
         radioButtonSine.setChecked(true);
+
+        initEngine();
+    }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+
+        startEngine();
+    }
+
+    @Override
+    protected void onPause() {
+
+        super.onPause();
+
+        pauseEngine();
+    }
+
+    @Override
+    protected void onStop() {
+
+        super.onStop();
+
+        flushEngine();
+
+        stopEngine();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
+
+        closeEngine();
     }
 
     private void setListView() {
@@ -99,9 +167,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (onOffbutton.isChecked()) {
 
                     Toast.makeText(this, "On", Toast.LENGTH_SHORT).show();
+                    runEngine(true);
                 } else {
 
                     Toast.makeText(this, "Off", Toast.LENGTH_SHORT).show();
+                    runEngine(false);
                 }
                 break;
         }
