@@ -20,21 +20,21 @@
 
 #include <android/log.h>
 #include "DenizonEngine.h"
-#include "../../../../oboe/src/common/Trace.h"
 
 DenizonEngine::DenizonEngine(int sampleRate) {
 
     this->sampleRate = sampleRate;
 
-    Trace::initialize();
-
     streamBuilder = new AudioStreamBuilder();
+
+    streamBuilder->setAudioApi(AudioApi::OpenSLES);
 
     streamBuilder->setDirection(Direction::Output);
     streamBuilder->setSharingMode(SharingMode::Shared);
+    streamBuilder->setPerformanceMode(PerformanceMode::LowLatency);
     streamBuilder->setSampleRate(this->sampleRate);
     streamBuilder->setFormat(AudioFormat::Float);
-    streamBuilder->setPerformanceMode(PerformanceMode::LowLatency);
+
     streamBuilder->setCallback(this);
 
 }
@@ -147,7 +147,7 @@ void DenizonEngine::close() {
 
 void DenizonEngine::setOn(bool isOn) {
 
-    isRendering.store(isOn);
+    isRendering = isOn;
 }
 
 DataCallbackResult DenizonEngine::onAudioReady(
@@ -155,16 +155,21 @@ DataCallbackResult DenizonEngine::onAudioReady(
         void *audioData,
         int32_t numFrames) {
 
-    if (isRendering.load()) {
-        render(static_cast<float *>(audioData), numFrames);
-    }
+    if (isRendering) {
 
+        render(static_cast<float *>(audioData), numFrames);
+    } else {
+
+        memset(static_cast<uint8_t *>(audioData), 0,
+               sizeof(float) * numFrames);
+    }
     return DataCallbackResult::Continue;
 }
 
 void DenizonEngine::render(float *audioData, int32_t numFrames) {
 
     for (int i = 0; i < numFrames; i++) {
-        audioData[i] = 1.0f;
+
+        audioData[i] = 0.5f;
     }
 }

@@ -84,15 +84,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
-
         super.onResume();
 
-        startEngine();
+        //startEngine();
     }
 
     @Override
     protected void onPause() {
-
         super.onPause();
 
         pauseEngine();
@@ -100,18 +98,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onStop() {
-
         super.onStop();
 
         flushEngine();
 
         stopEngine();
-
     }
 
     @Override
     protected void onDestroy() {
-
         super.onDestroy();
 
         closeEngine();
@@ -166,12 +161,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.toggleOnOffButton:
                 if (onOffbutton.isChecked()) {
 
-                    Toast.makeText(this, "On", Toast.LENGTH_SHORT).show();
                     runEngine(true);
+                    startEngine();
                 } else {
 
-                    Toast.makeText(this, "Off", Toast.LENGTH_SHORT).show();
                     runEngine(false);
+                    stopEngine();
                 }
                 break;
         }

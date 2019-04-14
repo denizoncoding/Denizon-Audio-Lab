@@ -72,8 +72,8 @@ private:
 
     bool isInitialized = false;
     bool isStarted = false;
-    // bool isRendering = false;
-    std::atomic<bool> isRendering{false};
+    bool isRendering = false;
+    // std::atomic<bool> isRendering{false};
     int sampleRate;
 
 };
