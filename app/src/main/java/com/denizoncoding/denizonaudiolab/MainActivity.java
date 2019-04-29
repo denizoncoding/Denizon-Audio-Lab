@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Deniz A. Atlihan
+ * Copyright 2019 Deniz A. ATLIHAN
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,8 +75,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setUIListeners();
 
-//        setListView();
-
         radioButtonSine.setChecked(true);
 
         initEngine();
@@ -86,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
 
-        //startEngine();
+        startEngine();
     }
 
     @Override
@@ -162,11 +160,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (onOffbutton.isChecked()) {
 
                     runEngine(true);
-                    startEngine();
                 } else {
 
                     runEngine(false);
-                    stopEngine();
                 }
                 break;
         }

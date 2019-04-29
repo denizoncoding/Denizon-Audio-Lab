@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Deniz A. Atlihan
+ * Copyright 2019 Deniz A. ATLIHAN
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
