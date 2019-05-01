@@ -16,10 +16,8 @@
 
 package com.denizoncoding.denizonaudiolab;
 
-import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -30,30 +28,13 @@ import android.widget.ToggleButton;
 
 import com.denizoncoding.denizonaudiolab.structure.DenizonEffect;
 import com.denizoncoding.denizonaudiolab.structure.DenizonEffectParameter;
+import com.denizoncoding.denizonaudiolab.synth.Synthesizer;
+import com.denizoncoding.denizonaudiolab.synth.WaveType;
 import com.denizoncoding.denizonaudiolab.ui.EffectListArrayAdapter;
 
 import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
-
-    static {
-        System.loadLibrary("native-lib");
-    }
-
-    public native boolean initEngine();
-
-    public native boolean startEngine();
-
-    public native boolean pauseEngine();
-
-    public native boolean flushEngine();
-
-    public native boolean stopEngine();
-
-    public native void closeEngine();
-
-    public native void runEngine(boolean onOff);
-
 
     private ToggleButton onOffbutton;
 
@@ -66,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ListView listViewEffects;
 
+    private Synthesizer synth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,37 +60,79 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         radioButtonSine.setChecked(true);
 
-        initEngine();
+        synth = new Synthesizer(48000);
+
+        boolean isInitialized = synth.initialize(WaveType.Sine, 440);
+
+        if (!isInitialized) {
+
+            Toast.makeText(this, "Engine Failed!", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
     protected void onResume() {
+
         super.onResume();
 
-        startEngine();
+        synth.start();
     }
 
     @Override
     protected void onPause() {
+
         super.onPause();
 
-        pauseEngine();
+        synth.pause();
     }
 
     @Override
     protected void onStop() {
+
+        synth.destroy();
         super.onStop();
-
-        flushEngine();
-
-        stopEngine();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
 
-        closeEngine();
+        super.onDestroy();
+    }
+
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.toggleOnOffButton:
+
+                synth.setSynthesis(onOffbutton.isChecked());
+
+                break;
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+        setSynthesizerWaveType();
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+        synth.setFromWaveFrequencyMap(seekBar.getProgress());
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 
     private void setListView() {
@@ -152,53 +177,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         seekBarFrequency.setOnSeekBarChangeListener(this);
     }
 
-    @Override
-    public void onClick(View v) {
+    private void setSynthesizerWaveType() {
 
-        switch (v.getId()) {
-            case R.id.toggleOnOffButton:
-                if (onOffbutton.isChecked()) {
+        WaveType waveType = WaveType.Sine;
 
-                    runEngine(true);
-                } else {
+        if (radioButtonSquare.isChecked()) {
 
-                    runEngine(false);
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-        if (radioButtonSine.isChecked()) {
-
-            Toast.makeText(this, "Sine", Toast.LENGTH_SHORT).show();
-        } else if (radioButtonSquare.isChecked()) {
-
-            Toast.makeText(this, "Square", Toast.LENGTH_SHORT).show();
+            waveType = WaveType.Square;
         } else if (radioButtonSawtooth.isChecked()) {
 
-            Toast.makeText(this, "Sawtooth", Toast.LENGTH_SHORT).show();
+            waveType = WaveType.Sawtooth;
         } else if (radioButtonTriangular.isChecked()) {
 
-            Toast.makeText(this, "Triangular", Toast.LENGTH_SHORT).show();
+            waveType = WaveType.Triangular;
         }
-    }
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-        Toast.makeText(this, "" + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
+        synth.setActiveWaveType(waveType);
     }
 }
