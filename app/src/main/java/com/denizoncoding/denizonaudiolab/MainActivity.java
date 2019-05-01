@@ -70,12 +70,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
 
         super.onResume();
-
+        synth.start();
     }
 
     @Override
     protected void onPause() {
 
+        synth.pause();
         super.onPause();
 
     }
@@ -103,11 +104,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (onOffbutton.isChecked()) {
 
                     synth.setSynthesis(true);
-                    synth.start();
+//                    synth.start();
 
                 } else {
 
-                    synth.pause();
+//                    synth.pause();
                     synth.setSynthesis(false);
                 }
 

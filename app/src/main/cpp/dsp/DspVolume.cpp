@@ -18,34 +18,20 @@
 // Created by deniz on 9.04.2019.
 //
 
-#ifndef DENIZON_AUDIO_LAB_OSCILLATOR_H
-#define DENIZON_AUDIO_LAB_OSCILLATOR_H
+#include "DspVolume.h"
 
-#include <jni.h>
-#include "WaveType.h"
+void DspVolume::process(float *audioData, int numFrames) {
 
-class Oscillator {
+    for (int i = 0; i < numFrames; i++) {
+        audioData[i] = audioData[i] * volume;
+    }
+}
 
-public:
+void DspVolume::setVolume(float newVolume) {
+    this->volume = newVolume;
+}
 
-    Oscillator(int sampleFrequency, int waveType, float waveFrequency);
+float DspVolume::getVolume() {
 
-    void render(float *audioData, int numFrames);
-
-    void setOn(bool isOn);
-
-    void setFrequency(float freq);
-
-    void setWaveType(int type);
-
-private:
-
-    int sampleFrequency;
-    bool isRendering = false;
-    WaveType waveType;
-    float waveFrequency;
-    // std::atomic<bool> isRendering{false};
-
-};
-
-#endif //DENIZON_AUDIO_LAB_OSCILLATOR_H
+    return this->volume;
+}

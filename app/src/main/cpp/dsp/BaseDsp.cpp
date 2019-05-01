@@ -15,16 +15,11 @@
  */
 
 //
-// Created by deniz on 9.04.2019.
+// Created by deniz on 1.05.2019.
 //
 
-#ifndef DENIZON_AUDIO_LAB_VOLUME_H
-#define DENIZON_AUDIO_LAB_VOLUME_H
+#include "BaseDsp.h"
 
+void BaseDsp::process(float *audioData, int numFrames) {
 
-class Volume {
-
-};
-
-
-#endif //DENIZON_AUDIO_LAB_VOLUME_H
+}

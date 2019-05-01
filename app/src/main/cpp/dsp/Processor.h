@@ -15,7 +15,29 @@
  */
 
 //
-// Created by deniz on 9.04.2019.
+// Created by deniz on 1.05.2019.
 //
 
-#include "Volume.h"
+
+
+#ifndef DENIZON_AUDIO_LAB_PROCESSOR_H
+#define DENIZON_AUDIO_LAB_PROCESSOR_H
+
+#include "BaseDsp.h"
+#include <vector>
+
+using namespace std;
+
+class Processor {
+
+public:
+    void addDsp(BaseDsp newDsp);
+
+    void processAll(float *audioData, int numFrames);
+
+private:
+    vector<BaseDsp> dspVector;
+
+};
+
+#endif //DENIZON_AUDIO_LAB_PROCESSOR_H

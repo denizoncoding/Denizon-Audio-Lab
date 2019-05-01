@@ -28,7 +28,7 @@ DenizonEngine::DenizonEngine(int sampleRate) {
 
     streamBuilder = new AudioStreamBuilder();
 
-    streamBuilder->setAudioApi(AudioApi::OpenSLES);
+//    streamBuilder->setAudioApi(AudioApi::OpenSLES);
 
     streamBuilder->setDirection(Direction::Output);
     streamBuilder->setSharingMode(SharingMode::Shared);
@@ -137,10 +137,19 @@ DataCallbackResult DenizonEngine::onAudioReady(
 
     osc->render(static_cast<float *>(audioData), numFrames);
 
+    processor->processAll(static_cast<float *>(audioData), numFrames);
+
+    //memset(static_cast<uint8_t *>(audioData), 0, sizeof(float) * numFrames);
+
     return DataCallbackResult::Continue;
 }
 
 void DenizonEngine::setOscillator(Oscillator *osc) {
 
     this->osc = osc;
+}
+
+void DenizonEngine::setProcessor(Processor *proc) {
+
+    this->processor = proc;
 }
