@@ -54,21 +54,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (!initializeEngine()) {
+
+            Toast.makeText(this, "Engine Failed!", Toast.LENGTH_SHORT).show();
+        }
+
         createUIElements();
 
         setUIListeners();
 
         radioButtonSine.setChecked(true);
-
-        synth = new Synthesizer(48000);
-
-        boolean isInitialized = synth.initialize(WaveType.Sine, 440);
-
-        if (!isInitialized) {
-
-            Toast.makeText(this, "Engine Failed!", Toast.LENGTH_SHORT).show();
-        }
-
     }
 
     @Override
@@ -76,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         super.onResume();
 
-        synth.start();
     }
 
     @Override
@@ -84,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         super.onPause();
 
-        synth.pause();
     }
 
     @Override
@@ -107,7 +100,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.toggleOnOffButton:
 
-                synth.setSynthesis(onOffbutton.isChecked());
+                if (onOffbutton.isChecked()) {
+
+                    synth.setSynthesis(true);
+                    synth.start();
+
+                } else {
+
+                    synth.pause();
+                    synth.setSynthesis(false);
+                }
 
                 break;
         }
@@ -133,6 +135,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
+    }
+
+    private boolean initializeEngine() {
+
+        synth = new Synthesizer(48000);
+
+        return synth.initialize(WaveType.Sine, 440);
     }
 
     private void setListView() {

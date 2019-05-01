@@ -18,7 +18,34 @@
 // Created by deniz on 9.04.2019.
 //
 
+#ifndef DENIZON_AUDIO_LAB_OSCILLATOR_H
+#define DENIZON_AUDIO_LAB_OSCILLATOR_H
+
+#include <jni.h>
+#include "WaveType.h"
 
 class Oscillator {
 
+public:
+
+    Oscillator(int sampleFrequency, int waveType, float waveFrequency);
+
+    void render(float *audioData, int numFrames);
+
+    void setOn(bool isOn);
+
+    void setFrequency(float freq);
+
+    void setWaveType(int type);
+
+private:
+
+    int sampleFrequency;
+    bool isRendering = false;
+    WaveType waveType;
+    float waveFrequency;
+    // std::atomic<bool> isRendering{false};
+
 };
+
+#endif //DENIZON_AUDIO_LAB_OSCILLATOR_H

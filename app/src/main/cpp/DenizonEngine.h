@@ -21,16 +21,14 @@
 #ifndef DENIZON_AUDIO_LAB_DENIZONENGINE_H
 #define DENIZON_AUDIO_LAB_DENIZONENGINE_H
 
-
 #include <oboe/Oboe.h>
 #include <vector>
-#include "synth/WaveType.h"
+#include "synth/Oscillator.h"
 
 using namespace oboe;
 
 class DenizonEngine : AudioStreamCallback {
 
-    // TODO: usage of isInitialized and isStarted
     // TODO: waitForStateChange algorithms
     // TODO: disconnect handle
 
@@ -50,33 +48,22 @@ public:
 
     void close();
 
-    void setOn(bool isOn);
-
-    void setFrequency(float freq);
-
-    void setWaveType(WaveType type);
+    void setOscillator(Oscillator *osc);
 
     DataCallbackResult onAudioReady(
             AudioStream *oboeStream,
             void *audioData,
             int32_t numFrames);
 
-    void render(float *audioData, int32_t numFrames);
-
 private:
 
     AudioStreamBuilder *streamBuilder;
     AudioStream *stream;
-
     Result lastResult = Result::ErrorNull;
 
-    bool isInitialized = false;
-    bool isStarted = false;
-    bool isRendering = false;
-    // std::atomic<bool> isRendering{false};
     int sampleRate;
 
+    Oscillator *osc;
 };
 
-
-#endif //DENIZON_AUDIO_LAB_DENIZONENGINE_H
+#endif  //DENIZON_AUDIO_LAB_DENIZONENGINE_H

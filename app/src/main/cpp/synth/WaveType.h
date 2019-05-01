@@ -18,9 +18,16 @@
 // Created by deniz on 9.04.2019.
 //
 
+#ifndef DENIZON_AUDIO_LAB_WAVETYPE_H
+#define DENIZON_AUDIO_LAB_WAVETYPE_H
+
 enum WaveType {
+
     Sine,
-    Sqaure,
-    Sawtooth,
-    Triangular
+    Square,
+    Triangular,
+    Sawtooth
 };
+
+#endif  //DENIZON_AUDIO_LAB_WAVETYPE_H
+

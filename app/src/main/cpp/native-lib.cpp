@@ -18,9 +18,12 @@
 #include <string>
 #include <oboe/Oboe.h>
 #include "DenizonEngine.h"
+#include "synth/Oscillator.h"
 
 extern "C" {
-DenizonEngine *engine = new DenizonEngine(48000);
+
+DenizonEngine *engine;
+Oscillator *osc;
 
 //JNIEXPORT jstring JNICALL
 //Java_com_denizoncoding_denizonaudiolab_MainActivity_stringFromJNI(
@@ -31,48 +34,73 @@ DenizonEngine *engine = new DenizonEngine(48000);
 //}
 
 JNIEXPORT jboolean JNICALL
-Java_com_denizoncoding_denizonaudiolab_MainActivity_initEngine(JNIEnv *env, jobject instance) {
+Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_initEngine(JNIEnv *env, jobject instance,
+                                                                    jint sampleRate,
+                                                                    jint initWaveType,
+                                                                    jfloat initFrequency) {
 
-    return engine->init();
+    engine = new DenizonEngine(sampleRate);
+    osc = new Oscillator(sampleRate, initWaveType, initFrequency);
+
+    engine->setOscillator(osc);
+
+    return static_cast<jboolean>(engine->init());
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_denizoncoding_denizonaudiolab_MainActivity_startEngine(JNIEnv *env, jobject instance) {
+Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_startEngine(JNIEnv *env,
+                                                                     jobject instance) {
 
-    return engine->start();
+    return static_cast<jboolean>(engine->start());
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_denizoncoding_denizonaudiolab_MainActivity_pauseEngine(JNIEnv *env, jobject instance) {
+Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_pauseEngine(JNIEnv *env,
+                                                                     jobject instance) {
 
-    return engine->pause();
+    return static_cast<jboolean>(engine->pause());
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_denizoncoding_denizonaudiolab_MainActivity_stopEngine(JNIEnv *env, jobject instance) {
+Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_flushEngine(JNIEnv *env,
+                                                                     jobject instance) {
 
-    return engine->stop();
+    return static_cast<jboolean>(engine->flush());
 }
 
-
 JNIEXPORT jboolean JNICALL
-Java_com_denizoncoding_denizonaudiolab_MainActivity_flushEngine(JNIEnv *env, jobject instance) {
+Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_stopEngine(JNIEnv *env, jobject instance) {
 
-    return engine->flush();
+    return static_cast<jboolean>(engine->stop());
 }
 
 JNIEXPORT void JNICALL
-Java_com_denizoncoding_denizonaudiolab_MainActivity_closeEngine(JNIEnv *env, jobject instance) {
+Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_closeEngine(JNIEnv *env,
+                                                                     jobject instance) {
 
     engine->close();
 }
 
 JNIEXPORT void JNICALL
-Java_com_denizoncoding_denizonaudiolab_MainActivity_runEngine(JNIEnv *env, jobject instance,
-                                                              jboolean onOff) {
+Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_runEngine(JNIEnv *env, jobject instance,
+                                                                   jboolean onOff) {
 
-    engine->setOn(onOff);
+    osc->setOn(onOff);
 }
 
+JNIEXPORT void JNICALL
+Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_setWaveType(JNIEnv *env, jobject instance,
+                                                                     jint waveType) {
 
+    osc->setWaveType(waveType);
+
+}
+
+JNIEXPORT void JNICALL
+Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_setFrequency(JNIEnv *env, jobject instance,
+                                                                      jfloat freq) {
+
+    osc->setFrequency(freq);
+
+}
 }

@@ -19,6 +19,7 @@
 //
 
 #include <android/log.h>
+#include <jni.h>
 #include "DenizonEngine.h"
 
 DenizonEngine::DenizonEngine(int sampleRate) {
@@ -49,13 +50,10 @@ bool DenizonEngine::init() {
                             "DenizonEngine",
                             "Error opening stream %s",
                             convertToText(lastResult));
-
-        isInitialized = false;
+        return false;
     }
 
-    isInitialized = true;
-
-    return isInitialized;
+    return true;
 }
 
 bool DenizonEngine::start() {
@@ -69,13 +67,10 @@ bool DenizonEngine::start() {
                             "Error starting stream %s",
                             convertToText(lastResult));
 
-        isStarted = false;
-
+        return false;
     }
 
-    isStarted = false;
-
-    return isStarted;
+    return false;
 }
 
 bool DenizonEngine::pause() {
@@ -91,8 +86,6 @@ bool DenizonEngine::pause() {
 
         return false;
     }
-
-    isStarted = false;
 
     return true;
 }
@@ -110,10 +103,6 @@ bool DenizonEngine::stop() {
 
         return false;
     }
-
-    isInitialized = false;
-
-    isStarted = false;
 
     return true;
 }
@@ -133,10 +122,6 @@ bool DenizonEngine::flush() {
         return false;
     }
 
-    isInitialized = false;
-
-    isStarted = false;
-
     return true;
 }
 
@@ -145,31 +130,17 @@ void DenizonEngine::close() {
     stream->close();
 }
 
-void DenizonEngine::setOn(bool isOn) {
-
-    isRendering = isOn;
-}
-
 DataCallbackResult DenizonEngine::onAudioReady(
         AudioStream *oboeStream,
         void *audioData,
         int32_t numFrames) {
 
-    if (isRendering) {
+    osc->render(static_cast<float *>(audioData), numFrames);
 
-        render(static_cast<float *>(audioData), numFrames);
-    } else {
-
-        memset(static_cast<uint8_t *>(audioData), 0,
-               sizeof(float) * numFrames);
-    }
     return DataCallbackResult::Continue;
 }
 
-void DenizonEngine::render(float *audioData, int32_t numFrames) {
+void DenizonEngine::setOscillator(Oscillator *osc) {
 
-    for (int i = 0; i < numFrames; i++) {
-
-        audioData[i] = 0.5f;
-    }
+    this->osc = osc;
 }

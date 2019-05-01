@@ -14,7 +14,7 @@ public class Synthesizer {
         System.loadLibrary("native-lib");
     }
 
-    private native boolean initEngine();
+    private native boolean initEngine(int sampleRate, int initWaveType, float initFrequency);
 
     private native boolean startEngine();
 
@@ -28,14 +28,19 @@ public class Synthesizer {
 
     private native void runEngine(boolean onOff);
 
+    private native void setWaveType(int waveType);
+
+    private native void setFrequency(float freq);
+
 
     public Synthesizer(int sampleRate) {
 
+        this.sampleRate = sampleRate;
     }
 
-    public boolean initialize(WaveType initWaveType, int initFrequency) {
+    public boolean initialize(WaveType initWaveType, float initFrequency) {
 
-        return false;
+        return initEngine(sampleRate, initWaveType.getTypeNumber(), initFrequency);
     }
 
     public boolean start() {
@@ -70,6 +75,23 @@ public class Synthesizer {
         runEngine(on);
     }
 
+    public void setFromWaveFrequencyMap(int progress) {
+
+        setActiveWaveFrequency(definedWaveFrequencies[progress]);
+    }
+
+    public void setActiveWaveType(WaveType activeWaveType) {
+
+        this.activeWaveType = activeWaveType;
+        setWaveType(activeWaveType.getTypeNumber());
+    }
+
+    public void setActiveWaveFrequency(float activeWaveFrequency) {
+
+        this.activeWaveFrequency = activeWaveFrequency;
+        setFrequency(activeWaveFrequency);
+    }
+
     public int getSampleRate() {
 
         return sampleRate;
@@ -80,23 +102,8 @@ public class Synthesizer {
         return activeWaveType;
     }
 
-    public void setActiveWaveType(WaveType activeWaveType) {
-
-        this.activeWaveType = activeWaveType;
-    }
-
     public float getActiveWaveFrequency() {
 
         return activeWaveFrequency;
-    }
-
-    public void setActiveWaveFrequency(float activeWaveFrequency) {
-
-        this.activeWaveFrequency = activeWaveFrequency;
-    }
-
-    public void setFromWaveFrequencyMap(int progress) {
-
-        setActiveWaveFrequency(definedWaveFrequencies[progress]);
     }
 }
