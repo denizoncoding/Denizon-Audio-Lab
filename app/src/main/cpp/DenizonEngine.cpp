@@ -35,8 +35,9 @@ DenizonEngine::DenizonEngine(int sampleRate) {
     streamBuilder->setPerformanceMode(PerformanceMode::LowLatency);
     streamBuilder->setSampleRate(this->sampleRate);
     streamBuilder->setFormat(AudioFormat::Float);
-
+    streamBuilder->setChannelCount(1);
     streamBuilder->setCallback(this);
+    this->sampleRate = streamBuilder->getSampleRate();
 
 }
 
@@ -137,7 +138,7 @@ DataCallbackResult DenizonEngine::onAudioReady(
 
     osc->render(static_cast<float *>(audioData), numFrames);
 
-    processor->processAll(static_cast<float *>(audioData), numFrames);
+//    processor->processAll(static_cast<float *>(audioData), numFrames);
 
     //memset(static_cast<uint8_t *>(audioData), 0, sizeof(float) * numFrames);
 
