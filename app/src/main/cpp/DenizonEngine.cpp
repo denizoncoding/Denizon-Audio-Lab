@@ -22,13 +22,11 @@
 #include <jni.h>
 #include "DenizonEngine.h"
 
-DenizonEngine::DenizonEngine(int sampleRate) {
+DenizonEngine::DenizonEngine(int initSampleRate) {
 
-    this->sampleRate = sampleRate;
+    this->sampleRate = initSampleRate;
 
     streamBuilder = new AudioStreamBuilder();
-
-//    streamBuilder->setAudioApi(AudioApi::OpenSLES);
 
     streamBuilder->setDirection(Direction::Output);
     streamBuilder->setSharingMode(SharingMode::Shared);
@@ -37,8 +35,6 @@ DenizonEngine::DenizonEngine(int sampleRate) {
     streamBuilder->setFormat(AudioFormat::Float);
     streamBuilder->setChannelCount(1);
     streamBuilder->setCallback(this);
-    this->sampleRate = streamBuilder->getSampleRate();
-
 }
 
 bool DenizonEngine::init() {
@@ -131,20 +127,6 @@ void DenizonEngine::close() {
     stream->close();
 }
 
-DataCallbackResult DenizonEngine::onAudioReady(
-        AudioStream *oboeStream,
-        void *audioData,
-        int32_t numFrames) {
-
-    osc->render(static_cast<float *>(audioData), numFrames);
-
-//    processor->processAll(static_cast<float *>(audioData), numFrames);
-
-    //memset(static_cast<uint8_t *>(audioData), 0, sizeof(float) * numFrames);
-
-    return DataCallbackResult::Continue;
-}
-
 void DenizonEngine::setOscillator(Oscillator *osc) {
 
     this->osc = osc;
@@ -153,4 +135,21 @@ void DenizonEngine::setOscillator(Oscillator *osc) {
 void DenizonEngine::setProcessor(Processor *proc) {
 
     this->processor = proc;
+}
+
+int DenizonEngine::getSampleRate() {
+
+    return this->sampleRate;
+}
+
+DataCallbackResult DenizonEngine::onAudioReady(
+        AudioStream *oboeStream,
+        void *audioData,
+        int32_t numFrames) {
+
+    osc->render(static_cast<float *>(audioData), numFrames);
+
+    processor->processAll(static_cast<float *>(audioData), numFrames);
+
+    return DataCallbackResult::Continue;
 }

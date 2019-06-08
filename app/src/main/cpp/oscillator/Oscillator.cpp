@@ -18,12 +18,14 @@
 // Created by deniz on 9.04.2019.
 //
 
+#include <android/log.h>
 #include "Oscillator.h"
 
 
 Oscillator::Oscillator(int sampleFrequency, int waveType, float waveFrequency) {
 
     this->sampleFrequency = sampleFrequency;
+
     setWaveType(waveType);
     setFrequency(waveFrequency);
 }
@@ -61,31 +63,30 @@ void Oscillator::setWaveType(int waveTypeNumber) {
 
 void Oscillator::render(float *audioData, int numFrames) {
 
-//    switch (waveType) {
-//        case Square:
-//            generateSquareWave(audioData, numFrames);
-//            break;
-//        case Sawtooth:
-//            generateSawtoohWave(audioData, numFrames);
-//            break;
-//        case Triangular:
-//            generateTriangularWave(audioData, numFrames);
-//            break;
-//        default:
-    generateSineWave(audioData, numFrames);
-//            break;
-//    }
+    switch (waveType) {
+        case Square:
+            generateSquareWave(audioData, numFrames);
+            break;
+        case Sawtooth:
+            generateSawtoohWave(audioData, numFrames);
+            break;
+        case Triangular:
+            generateTriangularWave(audioData, numFrames);
+            break;
+        default:
+            generateSineWave(audioData, numFrames);
+            break;
+    }
 
 }
 
 void Oscillator::generateSineWave(float *audioData, int32_t numFrames) {
 
-    for (int i = 0; i < numFrames; i += 2) {
+    for (int i = 0; i < numFrames; i++) {
 
         if (isRendering) {
 
-            audioData[i] = (float) sin(phase);
-            audioData[i + 1] =  sin(phase);
+            audioData[i] = sin(phase);
 
             phase += phaseSumSine;
 
@@ -97,7 +98,6 @@ void Oscillator::generateSineWave(float *audioData, int32_t numFrames) {
         } else {
 
             audioData[i] = 0;
-            audioData[i + 1] = 0;
         }
     }
 }
@@ -105,18 +105,26 @@ void Oscillator::generateSineWave(float *audioData, int32_t numFrames) {
 void Oscillator::generateSquareWave(float *audioData, int32_t numFrames) {
 
     for (int i = 0; i < numFrames; i++) {
-        //if(isOn) {
+
         if (isRendering) {
+
             if (phaseCounter <= samplesInHalfPeriode) {
+
                 audioData[i] = 1;
+
             } else {
+
                 audioData[i] = 0;
+
             }
             phaseCounter++;
+
             if (phaseCounter >= 2 * samplesInHalfPeriode) {
+
                 phaseCounter = 0;
             }
         } else {
+
             audioData[i] = 0;
         }
     }
@@ -127,14 +135,18 @@ void Oscillator::generateSawtoohWave(float *audioData, int32_t numFrames) {
     for (int i = 0; i < numFrames; i++) {
 
         if (isRendering) {
+
             audioData[i] = (1 / (2.0f * samplesInHalfPeriode)) * phaseCounter;
+
             phaseCounter++;
 
             if (phaseCounter >= 2 * samplesInHalfPeriode) {
 
                 phaseCounter = 0;
             }
+
         } else {
+
             audioData[i] = 0;
         }
     }
@@ -143,20 +155,29 @@ void Oscillator::generateSawtoohWave(float *audioData, int32_t numFrames) {
 void Oscillator::generateTriangularWave(float *audioData, int32_t numFrames) {
 
     for (int i = 0; i < numFrames; i++) {
-        //if(isOn) {
+
         if (isRendering) {
+
             if (phaseCounter <= samplesInHalfPeriode) {
+
                 audioData[i] = (1 / ((float) samplesInHalfPeriode)) * phaseCounter;
+
             } else {
+
                 audioData[i] =
                         1 - ((1 / ((float) samplesInHalfPeriode)) *
                              (phaseCounter - samplesInHalfPeriode));
             }
+
             phaseCounter++;
+
             if (phaseCounter >= 2 * samplesInHalfPeriode) {
+
                 phaseCounter = 0;
             }
+
         } else {
+
             audioData[i] = 0;
         }
     }

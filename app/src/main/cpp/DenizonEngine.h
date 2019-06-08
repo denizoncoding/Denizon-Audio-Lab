@@ -35,7 +35,7 @@ class DenizonEngine : AudioStreamCallback {
 
 public:
 
-    DenizonEngine(int sampleRate);
+    DenizonEngine(int initSampleRate);
 
     bool init();
 
@@ -53,10 +53,13 @@ public:
 
     void setProcessor(Processor *proc);
 
+    int getSampleRate();
+
     DataCallbackResult onAudioReady(
             AudioStream *oboeStream,
             void *audioData,
             int32_t numFrames);
+
 
 private:
 

@@ -16,8 +16,13 @@
 
 package com.denizoncoding.denizonaudiolab;
 
+import android.content.Context;
+import android.media.AudioManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -36,7 +41,7 @@ import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
 
-    private ToggleButton onOffbutton;
+    private ToggleButton onOffButton;
 
     private RadioButton radioButtonSine;
     private RadioButton radioButtonSquare;
@@ -56,7 +61,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (!initializeEngine()) {
 
-            Toast.makeText(this, "Engine Failed!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Engine Failed!", Toast.LENGTH_LONG).show();
+
+            finish();
+
+            return;
         }
 
         createUIElements();
@@ -84,13 +93,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStop() {
 
-        synth.destroy();
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
 
+        synth.destroy();
         super.onDestroy();
     }
 
@@ -101,14 +110,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.toggleOnOffButton:
 
-                if (onOffbutton.isChecked()) {
+                if (onOffButton.isChecked()) {
 
                     synth.setSynthesis(true);
-//                    synth.start();
 
                 } else {
 
-//                    synth.pause();
                     synth.setSynthesis(false);
                 }
 
@@ -140,9 +147,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean initializeEngine() {
 
-        synth = new Synthesizer(48000);
+        Integer sampleRate = 44100;
 
-        return synth.initialize(WaveType.Sine, 440);
+        try {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+
+                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+                sampleRate = Integer.parseInt(am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE));
+
+                if (sampleRate == null || sampleRate <= 0) {
+
+                    return false;
+                }
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return false;
+        }
+
+        synth = new Synthesizer();
+
+        return synth.initialize(sampleRate, WaveType.Sine, 440);
     }
 
     private void setListView() {
@@ -163,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void createUIElements() {
 
-        this.onOffbutton = findViewById(R.id.toggleOnOffButton);
+        this.onOffButton = findViewById(R.id.toggleOnOffButton);
 
         this.radioButtonSine = findViewById(R.id.radioButtonSine);
         this.radioButtonSquare = findViewById(R.id.radioButtonSquare);
@@ -177,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setUIListeners() {
 
-        onOffbutton.setOnClickListener(this);
+        onOffButton.setOnClickListener(this);
 
         radioButtonSine.setOnCheckedChangeListener(this);
         radioButtonSquare.setOnCheckedChangeListener(this);
@@ -194,9 +224,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (radioButtonSquare.isChecked()) {
 
             waveType = WaveType.Square;
+
         } else if (radioButtonSawtooth.isChecked()) {
 
             waveType = WaveType.Sawtooth;
+
         } else if (radioButtonTriangular.isChecked()) {
 
             waveType = WaveType.Triangular;

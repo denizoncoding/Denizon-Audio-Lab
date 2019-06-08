@@ -33,12 +33,7 @@ public class Synthesizer {
     private native void setFrequency(float freq);
 
 
-    public Synthesizer(int sampleRate) {
-
-        this.sampleRate = sampleRate;
-    }
-
-    public boolean initialize(WaveType initWaveType, float initFrequency) {
+    public boolean initialize(int sampleRate, WaveType initWaveType, float initFrequency) {
 
         return initEngine(sampleRate, initWaveType.getTypeNumber(), initFrequency);
     }
@@ -67,7 +62,7 @@ public class Synthesizer {
 
         closeEngine();
 
-        return false;
+        return true;
     }
 
     public void setSynthesis(boolean on) {
