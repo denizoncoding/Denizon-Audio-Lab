@@ -132,11 +132,6 @@ void DenizonEngine::setOscillator(Oscillator *osc) {
     this->osc = osc;
 }
 
-void DenizonEngine::setProcessor(Processor *proc) {
-
-    this->processor = proc;
-}
-
 int DenizonEngine::getSampleRate() {
 
     return this->sampleRate;
@@ -148,8 +143,6 @@ DataCallbackResult DenizonEngine::onAudioReady(
         int32_t numFrames) {
 
     osc->render(static_cast<float *>(audioData), numFrames);
-
-    processor->processAll(static_cast<float *>(audioData), numFrames);
 
     return DataCallbackResult::Continue;
 }

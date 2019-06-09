@@ -15,23 +15,27 @@
  */
 
 //
-// Created by deniz on 9.04.2019.
+// Created by deniz on 9.06.2019.
 //
 
-#include "DspVolume.h"
 
-void DspVolume::process(float *audioData, int numFrames) {
 
-    for (int i = 0; i < numFrames; i++) {
-        audioData[i] = audioData[i] * volume;
-    }
-}
 
-void DspVolume::setVolume(float newVolume) {
-    this->volume = newVolume;
-}
+#include <string>
+#include <vector>
+#include "EffectParameter.h"
 
-float DspVolume::getVolume() {
+using namespace std;
 
-    return this->volume;
-}
+class BaseEffect {
+
+public:
+
+    //vector<int> vect{ 10, 20, 30 }
+    BaseEffect(vector<string> types, vector<EffectParameter> parameters);
+
+    virtual void process(float *audioData, int numFrames);
+
+};
+
+

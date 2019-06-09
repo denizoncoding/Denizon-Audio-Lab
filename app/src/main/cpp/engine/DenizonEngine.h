@@ -23,8 +23,7 @@
 
 #include <oboe/Oboe.h>
 #include <vector>
-#include "oscillator/Oscillator.h"
-#include "dsp/Processor.h"
+#include "../oscillator/Oscillator.h"
 
 using namespace oboe;
 
@@ -51,7 +50,6 @@ public:
 
     void setOscillator(Oscillator *osc);
 
-    void setProcessor(Processor *proc);
 
     int getSampleRate();
 
@@ -70,7 +68,6 @@ private:
     int sampleRate;
 
     Oscillator *osc;
-    Processor *processor;
 };
 
 #endif  //DENIZON_AUDIO_LAB_DENIZONENGINE_H

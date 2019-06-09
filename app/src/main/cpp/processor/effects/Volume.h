@@ -15,11 +15,31 @@
  */
 
 //
-// Created by deniz on 1.05.2019.
+// Created by deniz on 9.06.2019.
 //
 
-#include "BaseDsp.h"
 
-void BaseDsp::process(float *audioData, int numFrames) {
 
-}
+
+#include "../BaseEffect.h"
+
+class Volume : BaseEffect {
+
+public :
+//vector<int> vect{ 10, 20, 30 }
+    Volume(vector<string> types { "Volume" }
+
+    ,
+
+    vector<EffectParameter> parameters{
+            new EffectParameter("Volume", 0, 1, 0.5f)
+    }
+    ) :
+    BaseEffect(types, parameters
+    ) {
+
+    }
+
+};
+
+

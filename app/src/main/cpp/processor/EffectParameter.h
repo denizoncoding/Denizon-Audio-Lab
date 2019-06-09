@@ -15,29 +15,44 @@
  */
 
 //
-// Created by deniz on 1.05.2019.
+// Created by deniz on 9.06.2019.
 //
 
 
 
-#ifndef DENIZON_AUDIO_LAB_PROCESSOR_H
-#define DENIZON_AUDIO_LAB_PROCESSOR_H
 
-#include "BaseDsp.h"
-#include <vector>
+
+#include <string>
 
 using namespace std;
 
-class Processor {
+class EffectParameter {
 
 public:
-    void addDsp(BaseDsp newDsp);
 
-    void processAll(float *audioData, int numFrames);
+    EffectParameter(string parameterName, float minLevel, float maxLevel, float currentLevel);
+
+    void setLevel(float currentLevel);
+
+    float getCurrentLevel();
+
+    float getMinLevel();
+
+    float getMaxLevel();
+
+    string getParameterName();
 
 private:
-    vector<BaseDsp> dspVector;
+
+    string parameterName;
+
+    float minLevel;
+
+    float maxLevel;
+
+    float currentLevel;
+
 
 };
 
-#endif //DENIZON_AUDIO_LAB_PROCESSOR_H
+

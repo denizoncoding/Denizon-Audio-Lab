@@ -17,17 +17,13 @@
 #include <jni.h>
 #include <string>
 #include <oboe/Oboe.h>
-#include "DenizonEngine.h"
+#include "engine/DenizonEngine.h"
 #include "oscillator/Oscillator.h"
-#include "dsp/DspVolume.h"
 
 extern "C" {
 
 DenizonEngine *engine;
 Oscillator *osc;
-Processor *proc;
-DspVolume *dspVolume;
-
 
 //JNIEXPORT jstring JNICALL
 //Java_com_denizoncoding_denizonaudiolab_MainActivity_stringFromJNI(
@@ -45,14 +41,8 @@ Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_initEngine(JNIEnv *env,
 
     engine = new DenizonEngine(sampleRate);
     osc = new Oscillator(sampleRate, initWaveType, initFrequency);
-    proc = new Processor();
-
-    dspVolume = new DspVolume();
-
-    proc->addDsp(*dspVolume);
 
     engine->setOscillator(osc);
-    engine->setProcessor(proc);
 
     return static_cast<jboolean>(engine->init());
 }

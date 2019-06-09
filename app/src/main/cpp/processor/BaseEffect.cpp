@@ -15,21 +15,15 @@
  */
 
 //
-// Created by deniz on 1.05.2019.
+// Created by deniz on 9.06.2019.
 //
 
-#include "Processor.h"
+#include "BaseEffect.h"
 
-void Processor::addDsp(BaseDsp newDsp) {
-
-    dspVector.push_back(newDsp);
+BaseEffect::BaseEffect(vector<string> types, vector<EffectParameter> parameters) {
 }
 
-void Processor::processAll(float *audioData, int numFrames) {
 
-    for (auto i = dspVector.begin(); i != dspVector.end(); ++i) {
-
-        ((BaseDsp) *i).process(audioData, numFrames);
-    }
+void BaseEffect::process(float *audioData, int numFrames) {
 
 }

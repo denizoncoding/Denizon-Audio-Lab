@@ -15,27 +15,7 @@
  */
 
 //
-// Created by deniz on 9.04.2019.
+// Created by deniz on 9.06.2019.
 //
 
-#ifndef DENIZON_AUDIO_LAB_DSPVOLUME_H
-#define DENIZON_AUDIO_LAB_DSPVOLUME_H
-
-
-#include "BaseDsp.h"
-
-class DspVolume : public BaseDsp {
-
-public:
-    virtual void process(float *audioData, int numFrames);
-
-    void setVolume(float newVolume);
-
-    float getVolume();
-
-private:
-    float volume = 1.0f;
-};
-
-
-#endif //DENIZON_AUDIO_LAB_DSPVOLUME_H
+#include "Volume.h"
