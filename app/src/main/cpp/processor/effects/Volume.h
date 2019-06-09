@@ -25,20 +25,22 @@
 
 class Volume : BaseEffect {
 
-public :
-//vector<int> vect{ 10, 20, 30 }
-    Volume(vector<string> types { "Volume" }
+public:
 
-    ,
-
-    vector<EffectParameter> parameters{
-            new EffectParameter("Volume", 0, 1, 0.5f)
+    Volume() : BaseEffect({}, {levelParameter}) {
     }
-    ) :
-    BaseEffect(types, parameters
-    ) {
 
+    void process(float *audioData, int numFrames) {
+
+        for (int i = 0; i < numFrames; ++i) {
+
+            audioData[i] = audioData[i] * levelParameter.getCurrentLevel();
+        }
     }
+
+private :
+
+    EffectParameter levelParameter = EffectParameter("Level", 0.0f, 1.0f, 1.0f);
 
 };
 

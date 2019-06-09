@@ -18,23 +18,38 @@
 // Created by deniz on 9.06.2019.
 //
 
-
-
-
-#include <string>
-#include <vector>
 #include "EffectParameter.h"
 
-using namespace std;
 
 class BaseEffect {
 
 public:
 
-    //vector<int> vect{ 10, 20, 30 }
-    BaseEffect(vector<string> types, vector<EffectParameter> parameters);
+    BaseEffect(vector <string> types_, vector <EffectParameter> parameters_) {
+
+        types = types_;
+        parameters = parameters_;
+    }
+
+protected:
 
     virtual void process(float *audioData, int numFrames);
+
+    vector <string> getTypes() {
+
+        return types;
+    }
+
+    vector <EffectParameter> getParameters() {
+
+        return parameters;
+    }
+
+private:
+
+    vector <string> types;
+    vector <EffectParameter> parameters;
+
 
 };
 

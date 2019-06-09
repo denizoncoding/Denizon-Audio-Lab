@@ -20,8 +20,9 @@ add_library( # Sets the name of the library.
         native-lib.cpp
         engine/DenizonEngine.cpp
         oscillator/Oscillator.cpp
-        processor/BaseEffect.cpp
-        processor/EffectParameter.cpp)
+        processor/EffectParameter.cpp
+        processor/BaseEffect.h
+        )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
