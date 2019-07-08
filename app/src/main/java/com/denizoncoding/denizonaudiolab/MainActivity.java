@@ -19,61 +19,63 @@ package com.denizoncoding.denizonaudiolab;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.denizoncoding.denizonaudiolab.structure.DenizonEffect;
-import com.denizoncoding.denizonaudiolab.structure.DenizonEffectParameter;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.denizoncoding.denizonaudiolab.synth.Synthesizer;
 import com.denizoncoding.denizonaudiolab.synth.WaveType;
-import com.denizoncoding.denizonaudiolab.ui.EffectListArrayAdapter;
-
-import java.util.LinkedList;
+import com.denizoncoding.denizonaudiolab.wrapper.Wrapper;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
 
-    private ToggleButton onOffButton;
-
-    private RadioButton radioButtonSine;
-    private RadioButton radioButtonSquare;
-    private RadioButton radioButtonSawtooth;
-    private RadioButton radioButtonTriangular;
-
-    private SeekBar seekBarFrequency;
-
-    private ListView listViewEffects;
+    ToggleButton onOffButton;
+    TextView infoText;
 
     private Synthesizer synth;
+
+    static {
+
+        System.loadLibrary("native-lib");
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        onOffButton = findViewById(R.id.toggleButton);
+        onOffButton.setOnClickListener(this);
+
+        infoText = findViewById(R.id.textView);
+
         if (!initializeEngine()) {
 
             Toast.makeText(this, "Engine Failed!", Toast.LENGTH_LONG).show();
-
             finish();
 
             return;
         }
 
-        createUIElements();
 
-        setUIListeners();
+        Wrapper wrapper = new Wrapper();
 
-        radioButtonSine.setChecked(true);
+        long ptr = wrapper.getId();
+
+        infoText.append("" + ptr);
+        infoText.append(wrapper.getNameFromId(ptr));
+        wrapper.setNameWithId(ptr);
+        infoText.append(wrapper.getNameFromId(ptr));
+
     }
+
 
     @Override
     protected void onResume() {
@@ -108,15 +110,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
 
         switch (v.getId()) {
-            case R.id.toggleOnOffButton:
+            case R.id.toggleButton:
 
                 if (onOffButton.isChecked()) {
 
                     synth.setSynthesis(true);
+//                    infoText.setText("on");
 
                 } else {
 
                     synth.setSynthesis(false);
+//                    infoText.setText("off");
+
                 }
 
                 break;
@@ -126,13 +131,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-        setSynthesizerWaveType();
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-        synth.setFromWaveFrequencyMap(seekBar.getProgress());
     }
 
     @Override
@@ -175,65 +178,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return synth.initialize(sampleRate, WaveType.Sine, 440);
     }
 
-    private void setListView() {
-
-
-        LinkedList<DenizonEffectParameter> paramList = new LinkedList<>();
-        paramList.add(new DenizonEffectParameter("param_name", 0, 100, 50));
-
-        LinkedList<DenizonEffect> effectList = new LinkedList<>();
-        for (int i = 0; i < 7; i++) {
-            effectList.add(new DenizonEffect("effect_" + i, true, paramList));
-        }
-
-        EffectListArrayAdapter effectListArrayAdapter = new EffectListArrayAdapter(this, effectList);
-
-        listViewEffects.setAdapter(effectListArrayAdapter);
-    }
-
-    private void createUIElements() {
-
-        this.onOffButton = findViewById(R.id.toggleOnOffButton);
-
-        this.radioButtonSine = findViewById(R.id.radioButtonSine);
-        this.radioButtonSquare = findViewById(R.id.radioButtonSquare);
-        this.radioButtonSawtooth = findViewById(R.id.radioButtonSawtooth);
-        this.radioButtonTriangular = findViewById(R.id.radioButtonTriangular);
-
-        this.seekBarFrequency = findViewById(R.id.seekBarFrequency);
-
-        this.listViewEffects = findViewById(R.id.listViewEffects);
-    }
-
-    private void setUIListeners() {
-
-        onOffButton.setOnClickListener(this);
-
-        radioButtonSine.setOnCheckedChangeListener(this);
-        radioButtonSquare.setOnCheckedChangeListener(this);
-        radioButtonSawtooth.setOnCheckedChangeListener(this);
-        radioButtonTriangular.setOnCheckedChangeListener(this);
-
-        seekBarFrequency.setOnSeekBarChangeListener(this);
-    }
-
-    private void setSynthesizerWaveType() {
-
-        WaveType waveType = WaveType.Sine;
-
-        if (radioButtonSquare.isChecked()) {
-
-            waveType = WaveType.Square;
-
-        } else if (radioButtonSawtooth.isChecked()) {
-
-            waveType = WaveType.Sawtooth;
-
-        } else if (radioButtonTriangular.isChecked()) {
-
-            waveType = WaveType.Triangular;
-        }
-
-        synth.setActiveWaveType(waveType);
-    }
 }

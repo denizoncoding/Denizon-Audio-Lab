@@ -24,6 +24,7 @@
 #include <oboe/Oboe.h>
 #include <vector>
 #include "../oscillator/Oscillator.h"
+#include "../processor/Processor.h"
 
 using namespace oboe;
 
@@ -50,8 +51,9 @@ public:
 
     void setOscillator(Oscillator *osc);
 
-
     int getSampleRate();
+
+    Processor *getProcessor();
 
     DataCallbackResult onAudioReady(
             AudioStream *oboeStream,
@@ -61,13 +63,17 @@ public:
 
 private:
 
+    int sampleRate;
+
     AudioStreamBuilder *streamBuilder;
     AudioStream *stream;
     Result lastResult = Result::ErrorNull;
 
-    int sampleRate;
-
     Oscillator *osc;
+
+    Processor *processor;
+
+    void prepareStream(int initSampleRate);
 };
 
 #endif  //DENIZON_AUDIO_LAB_DENIZONENGINE_H

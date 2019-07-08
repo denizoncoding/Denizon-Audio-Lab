@@ -24,10 +24,16 @@ public class DenizonEffect {
     boolean isOn;
     LinkedList<DenizonEffectParameter> parameters = new LinkedList<>();
 
-    public DenizonEffect(String name, boolean isOn, LinkedList<DenizonEffectParameter> effects) {
+    public DenizonEffect(String name, LinkedList<DenizonEffectParameter> effects) {
         this.name = name;
-        this.isOn = isOn;
+        this.isOn = false;
         this.parameters = effects;
+    }
+
+    public DenizonEffect(String name) {
+        this.name = name;
+        this.isOn = false;
+        this.parameters = new LinkedList<>();
     }
 
     public String getName() {

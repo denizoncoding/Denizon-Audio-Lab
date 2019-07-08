@@ -18,6 +18,8 @@
 // Created by deniz on 9.06.2019.
 //
 
+#pragma once
+
 #include <string>
 #include <vector>
 

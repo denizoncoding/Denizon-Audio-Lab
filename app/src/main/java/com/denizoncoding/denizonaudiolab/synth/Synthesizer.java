@@ -1,6 +1,9 @@
 package com.denizoncoding.denizonaudiolab.synth;
 
+import com.denizoncoding.denizonaudiolab.structure.DenizonEffect;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class Synthesizer {
 
@@ -31,6 +34,10 @@ public class Synthesizer {
     private native void setWaveType(int waveType);
 
     private native void setFrequency(float freq);
+
+    private native Object getAvailableEffects();
+
+    private native void addEffect(DenizonEffect effec);
 
 
     public boolean initialize(int sampleRate, WaveType initWaveType, float initFrequency) {
@@ -100,5 +107,10 @@ public class Synthesizer {
     public float getActiveWaveFrequency() {
 
         return activeWaveFrequency;
+    }
+
+    public DenizonEffect getAvailableEffect() {
+
+        return (DenizonEffect) getAvailableEffects();
     }
 }

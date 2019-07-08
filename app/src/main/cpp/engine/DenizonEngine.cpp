@@ -21,17 +21,26 @@
 #include <android/log.h>
 #include <jni.h>
 #include "DenizonEngine.h"
+#include "../processor/effects/Volume.h"
 
 DenizonEngine::DenizonEngine(int initSampleRate) {
 
-    this->sampleRate = initSampleRate;
+    sampleRate = initSampleRate;
+
+    prepareStream(initSampleRate);
+
+    processor = new Processor();
+    processor->addEffect(new Volume());
+}
+
+void DenizonEngine::prepareStream(int initSampleRate) {
 
     streamBuilder = new AudioStreamBuilder();
 
     streamBuilder->setDirection(Direction::Output);
     streamBuilder->setSharingMode(SharingMode::Shared);
     streamBuilder->setPerformanceMode(PerformanceMode::LowLatency);
-    streamBuilder->setSampleRate(this->sampleRate);
+    streamBuilder->setSampleRate(sampleRate);
     streamBuilder->setFormat(AudioFormat::Float);
     streamBuilder->setChannelCount(1);
     streamBuilder->setCallback(this);
@@ -137,12 +146,18 @@ int DenizonEngine::getSampleRate() {
     return this->sampleRate;
 }
 
+Processor *DenizonEngine::getProcessor() {
+
+    return this->processor;
+}
+
 DataCallbackResult DenizonEngine::onAudioReady(
         AudioStream *oboeStream,
         void *audioData,
         int32_t numFrames) {
 
     osc->render(static_cast<float *>(audioData), numFrames);
+    processor->processWithEffects(static_cast<float *>(audioData), numFrames);
 
     return DataCallbackResult::Continue;
 }

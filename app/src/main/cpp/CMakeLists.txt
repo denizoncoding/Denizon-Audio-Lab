@@ -20,8 +20,10 @@ add_library( # Sets the name of the library.
         native-lib.cpp
         engine/DenizonEngine.cpp
         oscillator/Oscillator.cpp
-        processor/EffectParameter.cpp
-        processor/BaseEffect.h
+        processor/util/EffectParameter.cpp
+        processor/util/BaseEffect.h
+        processor/effects/Volume.h
+        processor/Processor.cpp
         )
 
 # Searches for a specified prebuilt library and stores the path as a

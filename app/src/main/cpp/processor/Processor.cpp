@@ -15,36 +15,30 @@
  */
 
 //
-// Created by deniz on 9.06.2019.
+// Created by deniz on 15.06.2019.
 //
 
-#pragma once
+#include "Processor.h"
 
-#include "../util/BaseEffect.h"
 
-class Volume : public BaseEffect {
+void Processor::addEffect(BaseEffect *effect) {
 
-public:
+    effectsList->push_back((long) effect);
+}
 
-    Volume() : BaseEffect() {
+const vector<long> Processor::getEffects() {
 
-        setName("Volume");
+    return *effectsList;
+}
 
-        addEffectParameter(levelParameter);
+void Processor::processWithEffects(float *audioData, int numFrames) {
+
+    const vector<long> &vector = getEffects();
+
+    int size = vector.size();
+
+    for (int i = 0; i < size; i++) {
+
+        ((BaseEffect *) vector[i])->process(audioData, numFrames);
     }
-
-    void process(float *audioData, int numFrames) {
-
-        for (int i = 0; i < numFrames; ++i) {
-
-            audioData[i] = audioData[i] * levelParameter.getCurrentLevel();
-        }
-    }
-
-private :
-
-    EffectParameter levelParameter = EffectParameter("Level", 0.0f, 1.0f, 0.9f);
-
-};
-
-
+}

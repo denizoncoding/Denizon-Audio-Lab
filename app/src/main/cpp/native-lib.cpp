@@ -15,24 +15,15 @@
  */
 
 #include <jni.h>
-#include <string>
-#include <oboe/Oboe.h>
 #include "engine/DenizonEngine.h"
 #include "oscillator/Oscillator.h"
+#include "processor/effects/Volume.h"
 
-extern "C" {
 
 DenizonEngine *engine;
 Oscillator *osc;
 
-//JNIEXPORT jstring JNICALL
-//Java_com_denizoncoding_denizonaudiolab_MainActivity_stringFromJNI(
-//        JNIEnv *env,
-//        jobject /* this */) {
-//    std::string hello = "Hello from C++";
-//    return env->NewStringUTF(hello.c_str());
-//}
-
+extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_initEngine(JNIEnv *env, jobject instance,
                                                                     jint sampleRate,
@@ -47,6 +38,7 @@ Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_initEngine(JNIEnv *env,
     return static_cast<jboolean>(engine->init());
 }
 
+extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_startEngine(JNIEnv *env,
                                                                      jobject instance) {
@@ -54,6 +46,7 @@ Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_startEngine(JNIEnv *env
     return static_cast<jboolean>(engine->start());
 }
 
+extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_pauseEngine(JNIEnv *env,
                                                                      jobject instance) {
@@ -61,6 +54,7 @@ Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_pauseEngine(JNIEnv *env
     return static_cast<jboolean>(engine->pause());
 }
 
+extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_flushEngine(JNIEnv *env,
                                                                      jobject instance) {
@@ -68,12 +62,14 @@ Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_flushEngine(JNIEnv *env
     return static_cast<jboolean>(engine->flush());
 }
 
+extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_stopEngine(JNIEnv *env, jobject instance) {
 
     return static_cast<jboolean>(engine->stop());
 }
 
+extern "C"
 JNIEXPORT void JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_closeEngine(JNIEnv *env,
                                                                      jobject instance) {
@@ -81,6 +77,7 @@ Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_closeEngine(JNIEnv *env
     engine->close();
 }
 
+extern "C"
 JNIEXPORT void JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_runEngine(JNIEnv *env, jobject instance,
                                                                    jboolean onOff) {
@@ -88,6 +85,7 @@ Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_runEngine(JNIEnv *env, 
     osc->setOn(onOff);
 }
 
+extern "C"
 JNIEXPORT void JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_setWaveType(JNIEnv *env, jobject instance,
                                                                      jint waveType) {
@@ -96,6 +94,7 @@ Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_setWaveType(JNIEnv *env
 
 }
 
+extern "C"
 JNIEXPORT void JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_setFrequency(JNIEnv *env, jobject instance,
                                                                       jfloat freq) {
@@ -103,4 +102,46 @@ Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_setFrequency(JNIEnv *en
     osc->setFrequency(freq);
 
 }
+extern "C"
+JNIEXPORT jlongArray JNICALL
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getIdList(JNIEnv *env, jobject instance) {
+
+    const vector<long> &vector = engine->getProcessor()->getEffects();
+
+    int size = vector.size();
+
+    jlongArray result = static_cast<jlongArray>(env->NewLongArray(size));
+
+    if (result == NULL) {
+
+        return nullptr;
+    }
+
+    jlong fill[vector.size()];
+
+    for (int i = 0; i < size; i++) {
+        fill[i] = vector[i];
+    }
+
+    env->SetLongArrayRegion(result, 0, size, fill);
+
+    return result;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getNameFromId(JNIEnv *env, jobject instance,
+                                                                     jlong id) {
+
+    // TODO
+
+
+    return env->NewStringUTF(((BaseEffect *) id)->getName().c_str());
+}extern "C"
+JNIEXPORT void JNICALL
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_setNameWithId(JNIEnv *env, jobject instance,
+                                                                     jlong id) {
+
+
+    ((BaseEffect *) id)->setName("changed");
 }

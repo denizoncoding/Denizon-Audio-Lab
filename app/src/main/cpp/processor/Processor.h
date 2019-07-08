@@ -15,41 +15,41 @@
  */
 
 //
-// Created by deniz on 9.06.2019.
+// Created by deniz on 15.06.2019.
 //
 
-#include "EffectParameter.h"
+#pragma once
 
+#include <list>
+#include "util/BaseEffect.h"
 
-class BaseEffect {
+using namespace std;
+
+class Processor {
 
 public:
 
-    BaseEffect(vector <string> types_, vector <EffectParameter> parameters_) {
+    Processor() {
 
-        types = types_;
-        parameters = parameters_;
+        effectsList = new vector<long>();
     }
 
-protected:
+    ~Processor() {
 
-    virtual void process(float *audioData, int numFrames);
-
-    vector <string> getTypes() {
-
-        return types;
+        delete effectsList;
     }
 
-    vector <EffectParameter> getParameters() {
+    void addEffect(BaseEffect *effect);
 
-        return parameters;
-    }
+    const vector<long> getEffects();
+
+    BaseEffect *getEffect(int index);
+
+    void processWithEffects(float *audioData, int numFrames);
 
 private:
 
-    vector <string> types;
-    vector <EffectParameter> parameters;
-
+    vector<long> *effectsList;
 
 };
 

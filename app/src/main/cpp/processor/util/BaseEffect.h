@@ -20,30 +20,58 @@
 
 #pragma once
 
-#include "../util/BaseEffect.h"
+#include "EffectParameter.h"
 
-class Volume : public BaseEffect {
+class BaseEffect {
 
 public:
 
-    Volume() : BaseEffect() {
+    BaseEffect() {
 
-        setName("Volume");
-
-        addEffectParameter(levelParameter);
     }
 
-    void process(float *audioData, int numFrames) {
+//    void process(float *audioData, int numFrames) {
+//
+//    }
 
-        for (int i = 0; i < numFrames; ++i) {
+    virtual void process(float *audioData, int numFrames) {
 
-            audioData[i] = audioData[i] * levelParameter.getCurrentLevel();
-        }
     }
 
-private :
+    list <string> getTypes() {
 
-    EffectParameter levelParameter = EffectParameter("Level", 0.0f, 1.0f, 0.9f);
+        return types;
+    }
+
+    list <EffectParameter> getParameters() {
+
+        return parameters;
+    }
+
+    string getName() {
+
+        return name;
+    }
+
+    void setName(string name_) {
+
+        name = name_;
+    }
+
+protected:
+
+    void addEffectParameter(EffectParameter parameter) {
+
+        parameters.push_back(parameter);
+    }
+
+
+private:
+
+    string name = "unknown";
+    list <string> types;
+    list <EffectParameter> parameters;
+
 
 };
 
