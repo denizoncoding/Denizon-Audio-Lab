@@ -10,6 +10,7 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
+
 add_library( # Sets the name of the library.
         native-lib
 
@@ -19,11 +20,11 @@ add_library( # Sets the name of the library.
         # Provides a relative path to your source file(s).
         native-lib.cpp
         engine/DenizonEngine.cpp
-        oscillator/Oscillator.cpp
-        processor/util/EffectParameter.cpp
-        processor/util/BaseEffect.h
-        processor/effects/Volume.h
-        processor/Processor.cpp
+        synth/Processor.cpp
+        synth/BaseEffect.h
+        synth/EffectParameter.h
+        synth/effects/Volume.h
+        synth/generators/SineGenerator.h
         )
 
 # Searches for a specified prebuilt library and stores the path as a

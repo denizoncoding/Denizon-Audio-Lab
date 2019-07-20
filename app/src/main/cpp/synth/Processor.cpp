@@ -21,14 +21,37 @@
 #include "Processor.h"
 
 
+void Processor::addGenerator(BaseEffect *effect) {
+
+    generatorsVector->push_back((long) effect);
+}
+
+const vector<long> Processor::getGenerators() {
+
+    return *generatorsVector;
+}
+
 void Processor::addEffect(BaseEffect *effect) {
 
-    effectsList->push_back((long) effect);
+    effectsVector->push_back((long) effect);
 }
 
 const vector<long> Processor::getEffects() {
 
-    return *effectsList;
+    return *effectsVector;
+}
+
+void Processor::processGenerators(float *audioData, int numFrames) {
+
+    const vector<long> &vector = getGenerators();
+
+    int size = vector.size();
+
+    for (int i = 0; i < size; i++) {
+
+
+        ((BaseEffect *) vector[i])->process(audioData, numFrames, i == 0);
+    }
 }
 
 void Processor::processWithEffects(float *audioData, int numFrames) {
@@ -39,6 +62,6 @@ void Processor::processWithEffects(float *audioData, int numFrames) {
 
     for (int i = 0; i < size; i++) {
 
-        ((BaseEffect *) vector[i])->process(audioData, numFrames);
+        ((BaseEffect *) vector[i])->process(audioData, numFrames, false);
     }
 }

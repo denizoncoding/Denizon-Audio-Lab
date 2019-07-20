@@ -1,14 +1,8 @@
 package com.denizoncoding.denizonaudiolab.synth;
 
-import com.denizoncoding.denizonaudiolab.structure.DenizonEffect;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Synthesizer {
 
     int sampleRate;
-    WaveType activeWaveType;
     float activeWaveFrequency;
 
     float[] definedWaveFrequencies = new float[]{220f, 261.63f, 293.66f, 329.63f, 392f, 415.30f, 440f, 523.25f, 587.33f, 622.25f};
@@ -17,7 +11,7 @@ public class Synthesizer {
         System.loadLibrary("native-lib");
     }
 
-    private native boolean initEngine(int sampleRate, int initWaveType, float initFrequency);
+    private native boolean initEngine(int sampleRate, float initFrequency);
 
     private native boolean startEngine();
 
@@ -31,18 +25,12 @@ public class Synthesizer {
 
     private native void runEngine(boolean onOff);
 
-    private native void setWaveType(int waveType);
-
     private native void setFrequency(float freq);
 
-    private native Object getAvailableEffects();
 
-    private native void addEffect(DenizonEffect effec);
+    public boolean initialize(int sampleRate, float initFrequency) {
 
-
-    public boolean initialize(int sampleRate, WaveType initWaveType, float initFrequency) {
-
-        return initEngine(sampleRate, initWaveType.getTypeNumber(), initFrequency);
+        return initEngine(sampleRate, initFrequency);
     }
 
     public boolean start() {
@@ -82,35 +70,9 @@ public class Synthesizer {
         setActiveWaveFrequency(definedWaveFrequencies[progress]);
     }
 
-    public void setActiveWaveType(WaveType activeWaveType) {
-
-        this.activeWaveType = activeWaveType;
-        setWaveType(activeWaveType.getTypeNumber());
-    }
-
     public void setActiveWaveFrequency(float activeWaveFrequency) {
 
         this.activeWaveFrequency = activeWaveFrequency;
         setFrequency(activeWaveFrequency);
-    }
-
-    public int getSampleRate() {
-
-        return sampleRate;
-    }
-
-    public WaveType getActiveWaveType() {
-
-        return activeWaveType;
-    }
-
-    public float getActiveWaveFrequency() {
-
-        return activeWaveFrequency;
-    }
-
-    public DenizonEffect getAvailableEffect() {
-
-        return (DenizonEffect) getAvailableEffects();
     }
 }

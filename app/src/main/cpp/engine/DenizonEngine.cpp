@@ -21,7 +21,6 @@
 #include <android/log.h>
 #include <jni.h>
 #include "DenizonEngine.h"
-#include "../processor/effects/Volume.h"
 
 DenizonEngine::DenizonEngine(int initSampleRate) {
 
@@ -30,7 +29,6 @@ DenizonEngine::DenizonEngine(int initSampleRate) {
     prepareStream(initSampleRate);
 
     processor = new Processor();
-    processor->addEffect(new Volume());
 }
 
 void DenizonEngine::prepareStream(int initSampleRate) {
@@ -136,10 +134,6 @@ void DenizonEngine::close() {
     stream->close();
 }
 
-void DenizonEngine::setOscillator(Oscillator *osc) {
-
-    this->osc = osc;
-}
 
 int DenizonEngine::getSampleRate() {
 
@@ -156,7 +150,7 @@ DataCallbackResult DenizonEngine::onAudioReady(
         void *audioData,
         int32_t numFrames) {
 
-    osc->render(static_cast<float *>(audioData), numFrames);
+    processor->processGenerators(static_cast<float *>(audioData), numFrames);
     processor->processWithEffects(static_cast<float *>(audioData), numFrames);
 
     return DataCallbackResult::Continue;

@@ -16,25 +16,21 @@
 
 #include <jni.h>
 #include "engine/DenizonEngine.h"
-#include "oscillator/Oscillator.h"
-#include "processor/effects/Volume.h"
+#include "synth/effects/Volume.h"
+#include "synth/generators/SineGenerator.h"
 
 
 DenizonEngine *engine;
-Oscillator *osc;
 
 extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_initEngine(JNIEnv *env, jobject instance,
                                                                     jint sampleRate,
-                                                                    jint initWaveType,
                                                                     jfloat initFrequency) {
 
     engine = new DenizonEngine(sampleRate);
-    osc = new Oscillator(sampleRate, initWaveType, initFrequency);
-
-    engine->setOscillator(osc);
-
+    engine->getProcessor()->addGenerator(new SineGenerator(sampleRate));
+    engine->getProcessor()->addEffect(new Volume(sampleRate));
     return static_cast<jboolean>(engine->init());
 }
 
@@ -82,7 +78,6 @@ JNIEXPORT void JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_runEngine(JNIEnv *env, jobject instance,
                                                                    jboolean onOff) {
 
-    osc->setOn(onOff);
 }
 
 extern "C"
@@ -90,7 +85,6 @@ JNIEXPORT void JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_setWaveType(JNIEnv *env, jobject instance,
                                                                      jint waveType) {
 
-    osc->setWaveType(waveType);
 
 }
 
@@ -99,14 +93,89 @@ JNIEXPORT void JNICALL
 Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_setFrequency(JNIEnv *env, jobject instance,
                                                                       jfloat freq) {
 
-    osc->setFrequency(freq);
 
 }
 extern "C"
 JNIEXPORT jlongArray JNICALL
-Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getIdList(JNIEnv *env, jobject instance) {
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getGeneratorIds(JNIEnv *env,
+                                                                       jobject instance) {
+
+    const vector<long> &vector = engine->getProcessor()->getGenerators();
+
+    int size = vector.size();
+
+    jlongArray result = static_cast<jlongArray>(env->NewLongArray(size));
+
+    if (result == NULL) {
+
+        return nullptr;
+    }
+
+    jlong fill[vector.size()];
+
+    for (int i = 0; i < size; i++) {
+        fill[i] = vector[i];
+    }
+
+    env->SetLongArrayRegion(result, 0, size, fill);
+
+    return result;
+}
+
+extern "C"
+JNIEXPORT jlongArray JNICALL
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getEffectIds(JNIEnv *env, jobject instance) {
 
     const vector<long> &vector = engine->getProcessor()->getEffects();
+
+    int size = vector.size();
+
+    jlongArray result = static_cast<jlongArray>(env->NewLongArray(size));
+
+    if (result == NULL) {
+
+        return nullptr;
+    }
+
+    jlong fill[vector.size()];
+
+    for (int i = 0; i < size; i++) {
+        fill[i] = vector[i];
+    }
+
+    env->SetLongArrayRegion(result, 0, size, fill);
+
+    return result;
+
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getEffectNameFromId(JNIEnv *env,
+                                                                           jobject instance,
+                                                                           jlong id) {
+
+    // TODO
+
+
+    return env->NewStringUTF(((BaseEffect *) id)->getName().c_str());
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_setNameWithId(JNIEnv *env, jobject instance,
+                                                                     jlong id) {
+
+
+    ((BaseEffect *) id)->setName("changed");
+}
+
+extern "C"
+JNIEXPORT jlongArray JNICALL
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getParameterIdArray(JNIEnv *env,
+                                                                           jobject instance,
+                                                                           jlong id) {
+
+    const vector<long> &vector = ((BaseEffect *) id)->getParameters();
 
     int size = vector.size();
 
@@ -130,18 +199,57 @@ Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getIdList(JNIEnv *env, jo
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getNameFromId(JNIEnv *env, jobject instance,
-                                                                     jlong id) {
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getParameterNameFromId(JNIEnv *env,
+                                                                              jobject instance,
+                                                                              jlong parameterId) {
 
-    // TODO
 
+    return env->NewStringUTF(((EffectParameter *) parameterId)->getName().c_str());
+}
 
-    return env->NewStringUTF(((BaseEffect *) id)->getName().c_str());
-}extern "C"
+extern "C"
 JNIEXPORT void JNICALL
-Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_setNameWithId(JNIEnv *env, jobject instance,
-                                                                     jlong id) {
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_setParameterWithId(JNIEnv *env,
+                                                                          jobject instance,
+                                                                          jlong parameterId,
+                                                                          jfloat value) {
 
+    ((EffectParameter *) parameterId)->setValue(value);
+}
 
-    ((BaseEffect *) id)->setName("changed");
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_isParameterSwitchable(JNIEnv *env,
+                                                                             jobject instance,
+                                                                             jlong parameterId) {
+
+    return ((EffectParameter *) parameterId)->isIsSwitchable();
+
+}
+
+extern "C"
+JNIEXPORT jfloat JNICALL
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getParameterMinFromId(JNIEnv *env,
+                                                                             jobject instance,
+                                                                             jlong parameterId) {
+
+    return ((EffectParameter *) parameterId)->getMin();
+}
+
+extern "C"
+JNIEXPORT jfloat JNICALL
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getParameterValueFromId(JNIEnv *env,
+                                                                               jobject instance,
+                                                                               jlong parameterId) {
+
+    return ((EffectParameter *) parameterId)->getValue();
+}
+
+extern "C"
+JNIEXPORT jfloat JNICALL
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getParameterMaxFromId(JNIEnv *env,
+                                                                             jobject instance,
+                                                                             jlong parameterId) {
+
+    return ((EffectParameter *) parameterId)->getMax();
 }

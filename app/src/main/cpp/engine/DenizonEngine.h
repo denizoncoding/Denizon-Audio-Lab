@@ -23,8 +23,7 @@
 
 #include <oboe/Oboe.h>
 #include <vector>
-#include "../oscillator/Oscillator.h"
-#include "../processor/Processor.h"
+#include "../synth/Processor.h"
 
 using namespace oboe;
 
@@ -49,8 +48,6 @@ public:
 
     void close();
 
-    void setOscillator(Oscillator *osc);
-
     int getSampleRate();
 
     Processor *getProcessor();
@@ -68,8 +65,6 @@ private:
     AudioStreamBuilder *streamBuilder;
     AudioStream *stream;
     Result lastResult = Result::ErrorNull;
-
-    Oscillator *osc;
 
     Processor *processor;
 

@@ -21,22 +21,24 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.denizoncoding.denizonaudiolab.list.EffectsAdapter;
+import com.denizoncoding.denizonaudiolab.synth.Effect;
 import com.denizoncoding.denizonaudiolab.synth.Synthesizer;
-import com.denizoncoding.denizonaudiolab.synth.WaveType;
+import com.denizoncoding.denizonaudiolab.wrapper.ObjectGenerator;
 import com.denizoncoding.denizonaudiolab.wrapper.Wrapper;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     ToggleButton onOffButton;
-    TextView infoText;
+    Wrapper wrapper;
 
     private Synthesizer synth;
 
@@ -54,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         onOffButton = findViewById(R.id.toggleButton);
         onOffButton.setOnClickListener(this);
 
-        infoText = findViewById(R.id.textView);
 
         if (!initializeEngine()) {
 
@@ -64,30 +65,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
+        wrapper = new Wrapper();
+        ObjectGenerator objectGenerator = new ObjectGenerator(wrapper);
 
-        Wrapper wrapper = new Wrapper();
+        List<Effect> allEffects = objectGenerator.getAll();
 
-        long ptr = wrapper.getId();
-
-        infoText.append("" + ptr);
-        infoText.append(wrapper.getNameFromId(ptr));
-        wrapper.setNameWithId(ptr);
-        infoText.append(wrapper.getNameFromId(ptr));
+        final ListView listView = (ListView) findViewById(R.id.listView);
+        EffectsAdapter adapter = new EffectsAdapter(this, allEffects);
+        listView.setAdapter(adapter);
 
     }
-
 
     @Override
     protected void onResume() {
 
         super.onResume();
-        synth.start();
+//        synth.start();
     }
 
     @Override
     protected void onPause() {
 
         synth.pause();
+        onOffButton.setChecked(false);
         super.onPause();
 
     }
@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (onOffButton.isChecked()) {
 
+                    synth.start();
                     synth.setSynthesis(true);
 //                    infoText.setText("on");
 
@@ -121,31 +122,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     synth.setSynthesis(false);
 //                    infoText.setText("off");
+                    synth.pause();
 
                 }
 
                 break;
         }
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
     }
 
     private boolean initializeEngine() {
@@ -175,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         synth = new Synthesizer();
 
-        return synth.initialize(sampleRate, WaveType.Sine, 440);
+        return synth.initialize(sampleRate, 440);
     }
 
 }

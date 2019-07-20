@@ -21,36 +21,52 @@
 #pragma once
 
 #include <string>
+#include "EffectParameter.h"
 #include <vector>
+#include <math.h>
+
+#define M_PI 3.14159265358979323846
 
 using namespace std;
 
-class EffectParameter {
+class BaseEffect {
 
 public:
 
-    EffectParameter(string parameterName, float minLevel, float maxLevel, float currentLevel);
+    BaseEffect(string name, float sampleFrequency) {
 
-    void setLevel(float currentLevel);
+        this->name = name;
+        this->sampleFrequency = sampleFrequency;
+        parameters = new vector<long>();
+    }
 
-    float getCurrentLevel();
+    virtual void process(float *audioData, int numFrames, bool isAdding) {
 
-    float getMinLevel();
+    }
 
-    float getMaxLevel();
+    virtual void resetDsp() {
 
-    string getParameterName();
+    }
 
-private:
+    string getName() {
 
-    string parameterName;
+        return name;
+    }
 
-    float minLevel;
+    void setName(string name) {
 
-    float maxLevel;
+        this->name = name;
+    }
 
-    float currentLevel;
+    vector<long> getParameters() {
 
+        return *parameters;
+    }
+
+protected:
+    vector<long> *parameters;
+    string name = "unknown";
+    float sampleFrequency = 44100;
 
 };
 

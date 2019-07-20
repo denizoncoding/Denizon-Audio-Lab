@@ -21,7 +21,8 @@
 #pragma once
 
 #include <list>
-#include "util/BaseEffect.h"
+#include "BaseEffect.h"
+#include "vector"
 
 using namespace std;
 
@@ -31,13 +32,19 @@ public:
 
     Processor() {
 
-        effectsList = new vector<long>();
+        generatorsVector = new vector<long>();
+        effectsVector = new vector<long>();
     }
 
     ~Processor() {
 
-        delete effectsList;
+        delete effectsVector;
+        delete generatorsVector;
     }
+
+    void addGenerator(BaseEffect *effect);
+
+    const vector<long> getGenerators();
 
     void addEffect(BaseEffect *effect);
 
@@ -45,11 +52,14 @@ public:
 
     BaseEffect *getEffect(int index);
 
+    void processGenerators(float *audioData, int numFrames);
+
     void processWithEffects(float *audioData, int numFrames);
 
 private:
 
-    vector<long> *effectsList;
+    vector<long> *effectsVector;
+    vector<long> *generatorsVector;
 
 };
 

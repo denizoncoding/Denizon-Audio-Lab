@@ -15,35 +15,35 @@
  */
 
 //
-// Created by deniz on 9.06.2019.
+// Created by deniz on 14.07.2019.
 //
 
-#pragma once
 
-#include "../util/BaseEffect.h"
+
+
+#include "../BaseEffect.h"
 
 class Volume : public BaseEffect {
 
+
+private:
+    EffectParameter *level;
+
 public:
 
-    Volume() : BaseEffect() {
+    Volume(float sampleFrequency) : BaseEffect("Volume", sampleFrequency) {
 
-        setName("Volume");
-
-        addEffectParameter(levelParameter);
+        level = new EffectParameter("Level", 0, 1, 0.9f);
+        parameters->push_back((long) level);
     }
 
-    void process(float *audioData, int numFrames) {
+    void process(float *audioData, int numFrames, bool isAdding) {
 
-        for (int i = 0; i < numFrames; ++i) {
+        for (int i = 0; i < numFrames; i++) {
 
-            audioData[i] = audioData[i] * levelParameter.getCurrentLevel();
+            audioData[i] = audioData[i] * level->getValue();
         }
     }
-
-private :
-
-    EffectParameter levelParameter = EffectParameter("Level", 0.0f, 1.0f, 0.9f);
 
 };
 

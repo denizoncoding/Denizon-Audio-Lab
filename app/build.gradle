@@ -10,13 +10,24 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        externalNativeBuild {
-            cmake {
+//        externalNativeBuild {
+//            cmake {
 //                cppFlags "-std=c++14"
 //                arguments '-DANDROID_STL=c++_static'
 //                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+//            }
+//        }
+
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        }
+
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_static', '-DANDROID_TOOLCHAIN=clang', '-DANDROID_ARM_NEON=TRUE'
             }
         }
+
     }
     buildTypes {
         release {
