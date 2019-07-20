@@ -62,7 +62,9 @@ public:
 
         for (int i = 0; i < numFrames; i++) {
 
-            float sineVal = static_cast<float>(sin((lastPhaseConstant / freq) * 2 * M_PI));
+            float sineVal = static_cast<float>(sin(
+                    (lastPhaseConstant / (sampleFrequency / freq)) * 2 * M_PI)
+            );
 
             if (isAdding) {
 

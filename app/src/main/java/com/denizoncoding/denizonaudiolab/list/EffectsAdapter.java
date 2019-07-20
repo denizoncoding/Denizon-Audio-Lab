@@ -79,6 +79,8 @@ public class EffectsAdapter extends BaseAdapter {
                         200,
                         LinearLayout.LayoutParams.WRAP_CONTENT));
 
+                onOffSwitch.setChecked(parameter.getValue() == 1);
+
                 onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
