@@ -18,6 +18,7 @@
 // Created by deniz on 14.07.2019.
 //
 
+
 #pragma once
 
 #include <string>
@@ -28,13 +29,16 @@ using namespace std;
 class EffectParameter {
 
 public:
-    EffectParameter(const string &name, float min, float max, float value) : name(name), min(min),
-                                                                             max(max),
-                                                                             value(value) {
+    EffectParameter(const string &name, float min, float max,
+                    float value) : name(name),
+                                   min(min),
+                                   max(max),
+                                   value(value) {
         isSwitchable = false;
     }
 
-    EffectParameter(const string &name, float value) : name(name), min(0),
+    EffectParameter(const string &name, float value) : name(name),
+                                                       min(0),
                                                        max(1),
                                                        value(value) {
 
@@ -58,28 +62,19 @@ public:
     }
 
     float getValue() const {
+
         return value;
     }
 
-    void setValue(float newValue) {
+    void setValueIn100Range(float newValue) {
 
-        EffectParameter::value = (((max - min)) * newValue) + min;
-    }
-
-    string *getSwitches() const {
-        return switches;
+        value = (((max - min)) * (newValue / 100)) + min;
     }
 
 private:
-
     bool isSwitchable;
     string name;
     float min;
     float max;
     float value;
-    string *switches;
-
-
 };
-
-

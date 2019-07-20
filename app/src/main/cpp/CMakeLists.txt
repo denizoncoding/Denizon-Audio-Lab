@@ -21,8 +21,8 @@ add_library( # Sets the name of the library.
         native-lib.cpp
         engine/DenizonEngine.cpp
         synth/Processor.cpp
-        synth/BaseEffect.h
         synth/EffectParameter.h
+        synth/BaseEffect.h
         synth/effects/Volume.h
         synth/generators/SineGenerator.h
         )

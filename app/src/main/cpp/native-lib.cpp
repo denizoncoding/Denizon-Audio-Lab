@@ -209,12 +209,12 @@ Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_getParameterNameFromId(JN
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_setParameterWithId(JNIEnv *env,
-                                                                          jobject instance,
-                                                                          jlong parameterId,
-                                                                          jfloat value) {
+Java_com_denizoncoding_denizonaudiolab_wrapper_Wrapper_setParameterIn100RangeWithId(JNIEnv *env,
+                                                                                    jobject instance,
+                                                                                    jlong parameterId,
+                                                                                    jfloat value) {
 
-    ((EffectParameter *) parameterId)->setValue(value);
+    ((EffectParameter *) parameterId)->setValueIn100Range(value);
 }
 
 extern "C"

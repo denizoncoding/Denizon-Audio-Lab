@@ -29,7 +29,8 @@ private:
     EffectParameter *frequency;
     EffectParameter *level;
     int lastPhaseConstant;
-
+    float *lastFreq = new float[4];
+    std::mutex audioMutex;
 public:
 
     SineGenerator(float sampleFrequency) : BaseEffect("Sine", sampleFrequency) {
@@ -58,29 +59,40 @@ public:
             return;
         }
 
-        float freq = frequency->getValue();
+//        float *complexData = new float[numFrames + 4];
+//        memcpy(audioData, complexData, numFrames);
+//        memmove(audioData, audioData + 3, numFrames);
+//        memcpy(lastFreq, complexData, 4);
+
+        int phaseConstant = (int) (sampleFrequency / frequency->getValue());
+
+        float volume = level->getValue();
+        audioMutex.lock();
 
         for (int i = 0; i < numFrames; i++) {
 
             float sineVal = static_cast<float>(sin(
-                    (lastPhaseConstant / (sampleFrequency / freq)) * 2 * M_PI)
+                    (lastPhaseConstant * 2 * M_PI) / phaseConstant)
             );
 
             if (isAdding) {
 
-                audioData[i] = (audioData[i] / 2 + sineVal) * level->getValue();
+                audioData[i] = (audioData[i] / 2 + sineVal);
+
             } else {
 
-                audioData[i] = sineVal * level->getValue();
+                audioData[i] = sineVal;
             }
 
             lastPhaseConstant++;
 
-            if (lastPhaseConstant > freq) {
+            if (lastPhaseConstant >= phaseConstant) {
 
-                lastPhaseConstant -= freq;
+                lastPhaseConstant -= phaseConstant;
             }
         }
+
+        audioMutex.unlock();
     }
 };
 

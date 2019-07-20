@@ -16,7 +16,7 @@ public class Wrapper {
 
     public native void setNameWithId(long id);
 
-    public native void setParameterWithId(long parameterId, float value);
+    public native void setParameterIn100RangeWithId(long parameterId, float value);
 
     public native float getParameterMinFromId(long parameterId);
 

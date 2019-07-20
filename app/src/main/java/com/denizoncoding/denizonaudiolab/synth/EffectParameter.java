@@ -53,12 +53,12 @@ public class EffectParameter {
 
     public float getValue() {
 
-        return value;
+        return wrapper.getParameterValueFromId(this.parameterId);
     }
 
-    public void setValue(float value) {
+    public void setValueIn100Range(float value) {
 
-        wrapper.setParameterWithId(this.parameterId, value);
+        wrapper.setParameterIn100RangeWithId(this.parameterId, value);
         this.value = value;
     }
 }

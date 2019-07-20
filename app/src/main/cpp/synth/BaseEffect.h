@@ -69,5 +69,3 @@ protected:
     float sampleFrequency = 44100;
 
 };
-
-

@@ -51,105 +51,96 @@ public class EffectsAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View view = layoutInflater.inflate(R.layout.list_view_item, null);
+        View containerView = layoutInflater.inflate(R.layout.list_view_item, null);
 
-        LinearLayout effectLayout = view.findViewById(R.id.verticalLayout);
+        LinearLayout effectLayout = containerView.findViewById(R.id.verticalLayout);
 
-        TextView nameText = (TextView) view.findViewById(R.id.effectName);
+        TextView nameText = containerView.findViewById(R.id.effectName);
 
         Effect effect = effectList.get(position);
+
         nameText.setText(effect.getName());
         List<EffectParameter> parameterList = effect.getParameterList();
 
         for (final EffectParameter parameter : parameterList) {
 
-            LinearLayout parameterLayout = new LinearLayout(view.getContext());
+            LinearLayout parameterLayout;
 
             if (parameter.isSwitchable()) {
 
-                TextView parameterText = new TextView(view.getContext());
-                parameterText.setTextSize(18f);
-                parameterText.setLayoutParams(new LinearLayout.LayoutParams(
-                        100,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-                parameterText.setText(parameter.getName());
-
-                Switch onOffSwitch = new Switch(view.getContext());
-                onOffSwitch.setLayoutParams(new LinearLayout.LayoutParams(
-                        200,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-
-                onOffSwitch.setChecked(parameter.getValue() == 1);
-
-                onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                        if (isChecked) {
-                            parameter.setValue(1);
-                        } else {
-                            parameter.setValue(0);
-                        }
-                    }
-                });
-
-                parameterLayout.addView(parameterText);
-                parameterLayout.addView(onOffSwitch);
+                parameterLayout = generateSwitchItem(parameter);
 
             } else {
 
-                TextView parameterText = new TextView(view.getContext());
-                parameterText.setTextSize(18f);
-                parameterText.setLayoutParams(new LinearLayout.LayoutParams(
-                        200,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-                parameterText.setText(parameter.getName());
-
-                SeekBar valueBar = new SeekBar(view.getContext());
-                valueBar.setLayoutParams(new LinearLayout.LayoutParams(
-                        500,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-                valueBar.setMax(100);
-                int progress = (int) (100 * ((parameter.getValue() - parameter.getMin()) / (parameter.getMax() - parameter.getMin())));
-                valueBar.setProgress(progress);
-
-                valueBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                        parameter.setValue(progress / 100f);
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-                });
-
-
-                TextView valueText = new TextView(view.getContext());
-                valueText.setTextSize(18f);
-                valueText.setLayoutParams(new LinearLayout.LayoutParams(
-                        200,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-                valueText.setText(parameter.getName());
-
-                valueText.setText("" + progress / 100f);
-
-                parameterLayout.addView(parameterText);
-                parameterLayout.addView(valueBar);
-                parameterLayout.addView(valueText);
+                parameterLayout = generateParameterItem(parameter);
             }
 
             effectLayout.addView(parameterLayout);
         }
 
-        return view;
+        return containerView;
+    }
+
+    private LinearLayout generateSwitchItem(final EffectParameter parameter) {
+
+        LinearLayout parameterLayout = (LinearLayout) layoutInflater.inflate(R.layout.switch_layout_item, null);
+
+        ((TextView) parameterLayout.findViewById(R.id.textName)).setText(parameter.getName());
+
+        Switch onOffSwitch = parameterLayout.findViewById(R.id.bypSwitch);
+        onOffSwitch.setChecked(parameter.getValue() == 1);
+
+        onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
+
+                    parameter.setValueIn100Range(100);
+
+                } else {
+
+                    parameter.setValueIn100Range(0);
+                }
+            }
+        });
+
+        return parameterLayout;
+    }
+
+    private LinearLayout generateParameterItem(final EffectParameter parameter) {
+
+        LinearLayout parameterLayout = (LinearLayout) layoutInflater.inflate(R.layout.parameter_layout_item, null);
+
+        ((TextView) parameterLayout.findViewById(R.id.textName)).setText(parameter.getName());
+        final TextView valueText = parameterLayout.findViewById(R.id.textValue);
+        valueText.setText(String.format("%.2f", parameter.getValue()));
+
+        SeekBar valueBar = parameterLayout.findViewById(R.id.seekBarValue);
+
+        valueBar.setMax(100);
+        int progress = (int) (100 * ((parameter.getValue() - parameter.getMin()) / (parameter.getMax() - parameter.getMin())));
+        valueBar.setProgress(progress);
+
+        valueBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                parameter.setValueIn100Range(progress);
+                valueText.setText(String.format("%.2f", parameter.getValue()));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        return parameterLayout;
     }
 }
