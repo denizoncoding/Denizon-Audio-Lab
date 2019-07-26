@@ -1,7 +1,7 @@
 # Denizon-Audio-Lab
 This is an Android application for generating audio tone with oscillators and digital audio processing algorithms.
 
-Some spesifications:
+Some specifications:
 
 o Google's oboe is used for audio engine. The engine provides a simple callback mechanism for synthesizing audio.
 
