@@ -27,17 +27,26 @@ class Volume : public BaseEffect {
 
 
 private:
+    EffectParameter *bypass;
     EffectParameter *level;
 
 public:
 
     Volume(float sampleFrequency) : BaseEffect("Volume", sampleFrequency) {
 
+        bypass = new EffectParameter("Bypass", 1);
+        parameters->push_back((long) bypass);
+
         level = new EffectParameter("Level", 0, 1, 0.9f);
         parameters->push_back((long) level);
     }
 
     void process(float *audioData, int numFrames, bool isAdding) {
+
+        if (bypass->getValue() == 0) {
+
+            return;
+        }
 
         for (int i = 0; i < numFrames; i++) {
 

@@ -24,7 +24,9 @@ add_library( # Sets the name of the library.
         synth/EffectParameter.h
         synth/BaseEffect.h
         synth/effects/Volume.h
+        synth/effects/Delay.h
         synth/generators/SineGenerator.h
+        synth/generators/SquareGenerator.h
         )
 
 # Searches for a specified prebuilt library and stores the path as a

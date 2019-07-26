@@ -15,15 +15,12 @@
  */
 
 //
-// Created by deniz on 20.07.2019.
+// Created by deniz on 21.07.2019.
 //
-
-
 
 #include "../BaseEffect.h"
 
-
-class SineGenerator : public BaseEffect {
+class SquareGenerator : public BaseEffect {
 
 private:
     EffectParameter *bypass;
@@ -32,15 +29,9 @@ private:
 
     int lastPhaseConstant;
 
-#ifdef INTERPOLATION
-    float lastSample = 0;
-
-#endif
-
-//    std::mutex audioMutex;
 public:
 
-    SineGenerator(float sampleFrequency) : BaseEffect("Sine", sampleFrequency) {
+    SquareGenerator(float sampleFrequency) : BaseEffect("Square", sampleFrequency) {
 
         bypass = new EffectParameter("Bypass", 1);
         parameters->push_back((long) bypass);
@@ -51,7 +42,6 @@ public:
         level = new EffectParameter("Level", 0, 1, 0.5f);
         parameters->push_back((long) level);
 
-        resetDsp();
     }
 
     void resetDsp() {
@@ -66,45 +56,41 @@ public:
             return;
         }
 
+
         int samplePerPeriode = (int) (sampleFrequency / frequency->getValue());
 
         float volume = level->getValue();
 
+        float squareVal = 0;
+
         for (int i = 0; i < numFrames; i++) {
 
-            float sineVal = static_cast<float>(sin(
-                    (lastPhaseConstant * 2 * M_PI) / samplePerPeriode)
-            );
+            if (lastPhaseConstant < samplePerPeriode / 2) {
+
+                squareVal = 0;
+            } else {
+
+                squareVal = 1;
+            }
+
 
             if (isAdding) {
 
-                audioData[i] = (audioData[i] + (sineVal * volume)) / 2;
+                audioData[i] = (audioData[i] + (squareVal * volume)) / 2;
 
             } else {
 
-                audioData[i] = sineVal * volume;
+                audioData[i] = squareVal * volume;
             }
+
 
             lastPhaseConstant++;
 
             if (lastPhaseConstant >= samplePerPeriode) {
 
-                lastPhaseConstant -= samplePerPeriode;
+                lastPhaseConstant = 0;
             }
         }
-
-#ifdef INTERPOLATION
-
-        audioData[0] = (lastSample + audioData[0]) / 2;
-
-        for (int i = 1; i < numFrames; i++) {
-
-            audioData[i] = (audioData[i] + audioData[i - 1]) / 2;
-
-        }
-
-        lastSample = audioData[numFrames - 1];
-#endif
 
     }
 };

@@ -49,8 +49,7 @@ void Processor::processGenerators(float *audioData, int numFrames) {
 
     for (int i = 0; i < size; i++) {
 
-
-        ((BaseEffect *) vector[i])->process(audioData, numFrames, i == 0);
+        ((BaseEffect *) vector[i])->process(audioData, numFrames, i != 0);
     }
 }
 
