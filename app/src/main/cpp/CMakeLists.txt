@@ -25,6 +25,7 @@ add_library( # Sets the name of the library.
         synth/BaseEffect.h
         synth/effects/Volume.h
         synth/effects/Delay.h
+        synth/effects/Tremolo.h
         synth/generators/SineGenerator.h
         synth/generators/SquareGenerator.h
         )

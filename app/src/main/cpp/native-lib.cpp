@@ -18,6 +18,7 @@
 #include "engine/DenizonEngine.h"
 #include "synth/effects/Delay.h"
 #include "synth/effects/Volume.h"
+#include "synth/effects/Tremolo.h"
 #include "synth/generators/SineGenerator.h"
 #include "synth/generators/SquareGenerator.h"
 
@@ -34,6 +35,7 @@ Java_com_denizoncoding_denizonaudiolab_synth_Synthesizer_initEngine(JNIEnv *env,
     engine->getProcessor()->addGenerator(new SineGenerator(sampleRate));
     engine->getProcessor()->addGenerator(new SquareGenerator(sampleRate));
     engine->getProcessor()->addEffect(new Delay(sampleRate));
+    engine->getProcessor()->addEffect(new Tremolo(sampleRate));
     engine->getProcessor()->addEffect(new Volume(sampleRate));
     return static_cast<jboolean>(engine->init());
 }
